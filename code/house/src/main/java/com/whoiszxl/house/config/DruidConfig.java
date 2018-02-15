@@ -19,7 +19,6 @@ import com.google.common.collect.Lists;
 @Configuration
 public class DruidConfig {
 
-	
 	@ConfigurationProperties(prefix="spring.druid")
 	@Bean(initMethod="init", destroyMethod="close")
 	public DruidDataSource dataSource() {
