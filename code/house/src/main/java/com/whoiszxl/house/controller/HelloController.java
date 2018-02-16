@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.whoiszxl.house.common.model.User;
 import com.whoiszxl.house.service.UserService;
@@ -27,6 +28,11 @@ public class HelloController {
 		User one = userList.get(0);
 		modelMap.put("user", one);
 		return "hello";
+	}
+	
+	@RequestMapping("/index")
+	public String index() {
+		return "homepage/index";
 	}
 	
 }
