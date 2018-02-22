@@ -40,5 +40,15 @@ public class UserController {
 			return "redirect:/accounts/register?"+resultMsg.asUrlParams();
 		}
 	}
+	
+	@RequestMapping("accounts/verify")
+	public String verify(String key) {
+		boolean result = userService.enable(key);
+		if(result) {
+			return "redirect:/index?"+ResultMsg.successMsg("激活成功").asUrlParams();
+		}else {
+			return "redirect:/accounts/register?"+ResultMsg.errorMsg("激活失败，请确认链接是否过期").asUrlParams();
+		}
+	}
 
 }
