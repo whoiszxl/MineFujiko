@@ -9,18 +9,18 @@ import com.whoiszxl.house.common.result.ResultMsg;
 
 public class UserHelper {
 	
-	public static ResultMsg validate(User accout) {
-		if (StringUtils.isBlank(accout.getEmail())) {
+	public static ResultMsg validate(User account) {
+		if (StringUtils.isBlank(account.getEmail())) {
 			return ResultMsg.errorMsg("Email 有误");
 		}
-		if (StringUtils.isBlank(accout.getEmail())) {
+		if (StringUtils.isBlank(account.getEmail())) {
 			return ResultMsg.errorMsg("Email 有误");
 		}
-		if (StringUtils.isBlank(accout.getConfirmPasswd()) || StringUtils.isBlank(accout.getPasswd())
-				|| !accout.getPasswd().equals(accout.getConfirmPasswd())) {
+		if (StringUtils.isBlank(account.getConfirmPasswd()) || StringUtils.isBlank(account.getPasswd())
+				|| !account.getPasswd().equals(account.getConfirmPasswd())) {
 			return ResultMsg.errorMsg("Email 有误");
 		}
-		if (accout.getPasswd().length() < 6) {
+		if (account.getPasswd().length() < 6) {
 			return ResultMsg.errorMsg("密码大于6位");
 		}
 		return ResultMsg.successMsg("");

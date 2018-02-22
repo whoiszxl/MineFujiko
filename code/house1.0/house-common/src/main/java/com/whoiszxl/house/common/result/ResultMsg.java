@@ -21,6 +21,10 @@ public class ResultMsg {
 	private String errorMsg;
 	
 	private String successMsg;
+	
+	public boolean isSuccess(){
+		return errorMsg == null;
+	}
 
 	public String getErrorMsg() {
 		return errorMsg;
