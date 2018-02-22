@@ -15,43 +15,30 @@
         <div class="container">
             <ol class="breadcrumb">
                 <li><a href="#">Home</a></li>
-                <li class="active">◊¢≤·</li>
+                <li class="active">Ê≥®ÂÜå</li>
             </ol>
         </div>
         <!-- end Breadcrumb -->
 
         <div class="container">
-            <header><h1>◊¢≤·’À∫≈</h1></header>
+            <header><h1>Ê≥®ÂÜåË¥¶Âè∑</h1></header>
             <div class="row">
                 <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
                     <h3>Account Type</h3>
                     <form role="form" id="form-create-account" method="post" enctype="multipart/form-data" action="/accounts/register">
                         <div class="radio" id="create-account-user">
                             <label>
-                                <input type="radio" value="1" id="account-type-user"  name="type" required>∆’Õ®”√ªß
+                                <input type="radio" value="1" id="account-type-user"  name="type" required>ÊôÆÈÄöÁî®Êà∑
                             </label>
                         </div>
                         <div class="radio" id="agent-switch" data-agent-state="">
                             <label>
-                                <input type="radio" value="2" id="account-type-agent" name="type" required>æ≠ºÕ»À
+                                <input type="radio" value="2" id="account-type-agent" name="type" required>ÁªèÁ∫™‰∫∫
                             </label>
                         </div>
-                        <!--
-                         <div id="agency" class="disabled">
-                            <div class="form-group">
-                                <label for="account-agency">—°‘Òæ≠ºÕª˙ππ:</label>
-                                <select name="agencyId" id="agencyId">
-                                      <option value="0" >«Î—°‘Òæ≠ºÕª˙ππ</option>
-                                     <#list agencyList as agency>
-                                        <option value="${agency.id}" >${agency.name}</option>
-                                     </#list>
-                                </select>
-                            </div><!-- /.form-group -->
-                        </div>
-                        -->
                         <hr>
                         <div class="form-group">
-                            <label for="form-create-account-full-name">»´√˚:</label>
+                            <label for="form-create-account-full-name">ÂÖ®Âêç:</label>
                             <input type="text" class="form-control" id="form-create-account-full-name" name="name" required>
                         </div><!-- /.form-group -->
                         <div class="form-group">
@@ -59,31 +46,31 @@
                             <input type="text" class="form-control" id="form-create-account-email"  name="email" required>
                         </div><!-- /.form-group -->
                         <div class="form-group">
-                            <label for="form-create-account-email"> ÷ª˙∫≈:</label>
+                            <label for="form-create-account-email">ÊâãÊú∫Âè∑:</label>
                             <input type="text" class="form-control" id="form-create-account-email"  name="phone" >
                         </div><!-- /.form-group -->
                         <div class="form-group">
-                            <label for="form-create-account-password">√‹¬Î:</label>
+                            <label for="form-create-account-password">ÂØÜÁ†Å:</label>
                             <input type="password" class="form-control" id="form-create-account-password" name="passwd" required>
                         </div><!-- /.form-group -->
                         <div class="form-group">
-                            <label for="form-create-account-confirm-password">»∑»œ√‹¬Î:</label>
+                            <label for="form-create-account-confirm-password">Á°ÆËÆ§ÂØÜÁ†Å:</label>
                             <input type="password" class="form-control" id="form-create-account-confirm-password" name="confirmPasswd" required>
                         </div><!-- /.form-group -->
                          <div class="form-group">
-                            <label for="form-create-account-email">◊‘Œ“ΩÈ…‹:</label>
+                            <label for="form-create-account-email">Ëá™Êàë‰ªãÁªç:</label>
                             <textarea class="form-control" name="aboutme"></textarea> 
                         </div>
 
                         <div class="form-group">
-                            <label for="form-create-account-email">”√ªßÕ∑œÒ:</label>
+                            <label for="form-create-account-email">Áî®Êà∑Â§¥ÂÉè:</label>
                             <input id="file-upload" type="file" class="file" multiple="true" data-show-upload="false" data-show-caption="false" data-show-remove="false" accept="image/jpeg,image/png" data-browse-class="btn btn-default" data-browse-label="Browse Images" name="avatarFile" required>
                             <figure class="note"><strong>Hint:</strong> You can upload all images at once!</figure>
                         </div>
                               
                         
                         <div class="form-group clearfix">
-                            <button type="submit" class="btn pull-right btn-default" id="account-submit">◊¢≤·’À∫≈</button>
+                            <button type="submit" class="btn pull-right btn-default" id="account-submit">Ê≥®ÂÜåË¥¶Âè∑</button>
                         </div><!-- /.form-group -->
                         
                         
@@ -91,7 +78,7 @@
                     </form>
                     <hr>
                     <div class="center">
-                        <figure class="note"> Œ““—‘ƒ∂¡≤¢Õ¨“‚<a href="terms-conditions.html">”√ªß–≠“È</a></figure>
+                        <figure class="note"> ÊàëÂ∑≤ÈòÖËØªÂπ∂ÂêåÊÑè<a href="terms-conditions.html">Áî®Êà∑ÂçèËÆÆ</a></figure>
                     </div>
                 </div>
             </div><!-- /.row -->
