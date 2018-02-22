@@ -79,4 +79,16 @@ public class UserController {
 			return StringUtils.isNotBlank(target)?"redirect:" + target : "redirect:/index";
 		}
 	}
+	
+	/**
+	 * 注销操作
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("accounts/logout")
+	public String logout(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		session.invalidate();
+		return "redirect:/index";
+	}
 }

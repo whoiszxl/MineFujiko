@@ -33,7 +33,8 @@ public class UserService {
 	@Autowired
 	private MailService mailService;
 	
-	
+	@Value("${file.prefix}")
+	private String ImgPrefix;
 	
 	public List<User> getUsers() {
 		return userMapper.selectUsers();
@@ -84,6 +85,9 @@ public class UserService {
 
 	private List<User> getUserByQuery(User user) {
 		List<User> userList = userMapper.selectUsersByQuery(user);
+		userList.forEach(u -> {
+			u.setAvatar(ImgPrefix + u.getAvatar());
+		});
 		return userList;
 	}
 
