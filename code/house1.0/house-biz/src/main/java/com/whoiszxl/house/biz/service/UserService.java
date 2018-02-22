@@ -70,4 +70,21 @@ public class UserService {
 		return mailService.enable(key);
 	}
 
+	public User auth(String username, String password) {
+		User user = new User();
+		user.setEmail(username);
+		user.setPasswd(HashUtils.encryPassword(password));
+		user.setEnable(1);
+		List<User> list = getUserByQuery(user);
+		if(!list.isEmpty()) {
+			return list.get(0);
+		}
+		return null;
+	}
+
+	private List<User> getUserByQuery(User user) {
+		List<User> userList = userMapper.selectUsersByQuery(user);
+		return userList;
+	}
+
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import com.whoiszxl.house.common.utils.QiniuUtils;
 
 @Service
 public class FileService {
@@ -40,16 +42,19 @@ public class FileService {
 //		});
 		
 		for (MultipartFile file : files) {
-			File localFile = null;
-			if (!file.isEmpty()) {
-				try {
-					localFile = saveToLocal(file, filePath);
-					String path = StringUtils.substringAfterLast(localFile.getAbsolutePath(), filePath);
-					paths.add(path);
-				} catch (IOException e) {
-					throw new IllegalArgumentException(e);
-				}
-			}
+//			File localFile = null;
+//			if (!file.isEmpty()) {
+//				try {
+//					localFile = saveToLocal(file, filePath);
+//					String path = StringUtils.substringAfterLast(localFile.getAbsolutePath(), filePath);
+//				} catch (IOException e) {
+//					throw new IllegalArgumentException(e);
+//				}
+//			}
+			//将文件页保存到七牛云
+			QiniuUtils qiniu = new QiniuUtils();
+			Map<String, String> qiniuMap = qiniu.uploadToQiniu(file);
+			paths.add(qiniuMap.get("key"));
 		}
 		
 		return paths;
