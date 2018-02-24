@@ -17,6 +17,7 @@ import com.whoiszxl.house.biz.service.UserService;
 import com.whoiszxl.house.common.constants.CommonConstants;
 import com.whoiszxl.house.common.model.User;
 import com.whoiszxl.house.common.result.ResultMsg;
+import com.whoiszxl.house.common.utils.HashUtils;
 
 @Controller
 public class UserController {
@@ -74,7 +75,7 @@ public class UserController {
 		}else {
 			HttpSession session = request.getSession(true);
 			session.setAttribute(CommonConstants.USER_ATTRIBUTE, user);
-			session.setAttribute(CommonConstants.PLAIN_USER_ATTRIBUTE, user);
+			//session.setAttribute(CommonConstants.PLAIN_USER_ATTRIBUTE, user);
 			
 			return StringUtils.isNotBlank(target)?"redirect:" + target : "redirect:/index";
 		}
@@ -90,5 +91,38 @@ public class UserController {
 		HttpSession session = request.getSession();
 		session.invalidate();
 		return "redirect:/index";
+	}
+	
+	
+	/**
+	 * 個人信息頁面
+	 * @param updateUser
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("accounts/profile")
+	public String profile(HttpServletRequest request, User updateUser, ModelMap model) {
+		if(updateUser.getEmail() == null) {
+			return "/user/accounts/profile";
+		}
+		userService.updateUser(updateUser, updateUser.getEmail());
+		User query = new User();
+		query.setEmail(updateUser.getEmail());
+		List<User> user = userService.getUserByQuery(query);
+		request.getSession(true).setAttribute(CommonConstants.USER_ATTRIBUTE, user.get(0));
+		return "redirect:/accounts/profile?" + ResultMsg.successMsg("更新成功").asUrlParams();
+	}
+	
+	@RequestMapping("accounts/changePassword")
+	public String changePassword(String email, String password, String newPassword, String confirmPassword, ModelMap model) {
+		User user = userService.auth(email, password);
+		if(user == null || !confirmPassword.equals(newPassword)) {
+			return "redirect:/accounts/profile?"+ResultMsg.errorMsg("密碼錯誤").asUrlParams();
+		}
+		
+		User updateUser = new User();
+		updateUser.setPasswd(HashUtils.encryPassword(newPassword));
+		userService.updateUser(updateUser, updateUser.getEmail());
+		return "redirect:/accounts/profile?"+ResultMsg.successMsg("更新成功").asUrlParams();
 	}
 }
