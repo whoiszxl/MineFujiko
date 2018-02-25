@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.whoiszxl.house.biz.mapper.HouseMapper">
+
+
+	<sql id="houseField">
+		a.id,
+		a.type,
+		a.name,
+		a.price,
+		a.images,
+		a.area,
+		a.baths,
+		a.beds,
+		a.rating,
+		a.remarks,
+		a.properties,
+		a.floor_plan,
+		a.tags,
+		a.create_time,
+		a.city_id,
+		a.community_id,
+		a.address,
+		a.state
+	</sql>
+
+	<select id="selectPageHouses" resultType="house">
+		select
+		<include refid="houseField"></include>
+		from house
+		<if test="pageParams.offset != null and pageParams.limit != null">
+			limit #{pageParams.offset},#{pageParams.limit}
+		</if>
+		<if test="pageParams.offset == null and pageParams.limit != null">
+			limit #{pageParams.limit}
+		</if>
+	</select>
+
+</mapper>
