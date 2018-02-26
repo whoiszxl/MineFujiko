@@ -90,4 +90,9 @@ public class HouseService {
 		return houseMapper.selectSaleHouseUser(houseId);
 	}
 
+	public List<Community> getAllCommunitys() {
+		Community community = new Community();
+		return houseMapper.selectCommunity(community);
+	}
+
 }

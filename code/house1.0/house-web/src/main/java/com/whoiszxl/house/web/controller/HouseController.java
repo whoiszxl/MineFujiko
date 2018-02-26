@@ -8,6 +8,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.whoiszxl.house.biz.service.AgencyService;
+import com.whoiszxl.house.biz.service.CityService;
 import com.whoiszxl.house.biz.service.HouseService;
 import com.whoiszxl.house.biz.service.RecommendService;
 import com.whoiszxl.house.common.constants.CommonConstants;
@@ -33,6 +34,9 @@ public class HouseController {
 	
 	@Autowired
 	private RecommendService recommendService;
+	
+	@Autowired
+	private CityService cityService;
 	
 	
 	/**
@@ -80,6 +84,13 @@ public class HouseController {
 	public String houseMsg(UserMsg userMsg) {
 		houseService.addUserMsg(userMsg);
 		return "redirect:/house/detail?id="+userMsg.getHouseId();
+	}
+	
+	@RequestMapping("house/toAdd")
+	public String toAdd(ModelMap map) {
+		map.put("citys", cityService.getAllCitys());
+		map.put("communitys", houseService.getAllCommunitys());		
+		return "house/add";
 	}
 	
 	
