@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.whoiszxl.house.biz.mapper.AgencyMapper;
 import com.whoiszxl.house.common.model.User;
+import com.whoiszxl.house.common.page.PageData;
 import com.whoiszxl.house.common.page.PageParams;
 
 /**
@@ -49,6 +50,13 @@ public class AgencyService {
 			i.setAvatar(imgPrefix + i.getAvatar());
 		});
 		
+	}
+
+	public PageData<User> getAllAgent(PageParams pageParams) {
+		List<User> agents = agencyMapper.selectAgent(new User(), pageParams);
+		setImg(agents);
+		Long count = agencyMapper.selectAgentCount(new User());
+		return PageData.buildPage(agents, count, pageParams.getPageSize(), pageParams.getPageNum());
 	}
 
 }
