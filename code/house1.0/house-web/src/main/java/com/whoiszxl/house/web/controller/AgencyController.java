@@ -1,5 +1,7 @@
 package com.whoiszxl.house.web.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -7,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.whoiszxl.house.biz.service.AgencyService;
 import com.whoiszxl.house.biz.service.HouseService;
+import com.whoiszxl.house.biz.service.RecommendService;
+import com.whoiszxl.house.common.constants.CommonConstants;
 import com.whoiszxl.house.common.model.House;
 import com.whoiszxl.house.common.model.User;
 import com.whoiszxl.house.common.page.PageData;
@@ -26,9 +30,15 @@ public class AgencyController {
 	@Autowired
 	private HouseService houseService;
 	
+	@Autowired
+	private RecommendService recommendService;
+	
+	
 	@RequestMapping("/agency/agentList")
 	public String agentList(Integer pageSize, Integer pageNum, ModelMap modelMap) {
 		PageData<User> ps = agencyService.getAllAgent(PageParams.build(pageSize, pageNum));
+		List<House> hotHouses = recommendService.getHotHouse(CommonConstants.RECOM_SIZE);
+		modelMap.put("recomHouses", hotHouses);
 		modelMap.put("ps", ps);
 		return "/user/agent/agentList";
 	}
@@ -46,6 +56,8 @@ public class AgencyController {
 			modelMap.put("bindHouses", bindHouse.getList());
 		}
 		
+		List<House> hotHouses = recommendService.getHotHouse(CommonConstants.RECOM_SIZE);
+		modelMap.put("recomHouses", hotHouses);
 		modelMap.put("agent", user);
 		return "/user/agent/agentDetail";
 	}

@@ -1,5 +1,7 @@
 package com.whoiszxl.house.web.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -7,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.whoiszxl.house.biz.service.AgencyService;
 import com.whoiszxl.house.biz.service.HouseService;
+import com.whoiszxl.house.biz.service.RecommendService;
+import com.whoiszxl.house.common.constants.CommonConstants;
 import com.whoiszxl.house.common.model.House;
 import com.whoiszxl.house.common.model.HouseUser;
 import com.whoiszxl.house.common.model.UserMsg;
@@ -27,6 +31,9 @@ public class HouseController {
 	@Autowired
 	private AgencyService agencyService;
 	
+	@Autowired
+	private RecommendService recommendService;
+	
 	
 	/**
 	 * 1.实现分页
@@ -38,6 +45,8 @@ public class HouseController {
 	@RequestMapping("/house/list")
 	public String houseList(Integer pageSize,Integer pageNum,House query,ModelMap modelMap) {
 		PageData<House> ps = houseService.queryHouse(query,PageParams.build(pageSize, pageNum));
+		List<House> hotHouses = recommendService.getHotHouse(CommonConstants.RECOM_SIZE);
+		modelMap.put("recomHouses", hotHouses);
 		modelMap.put("ps", ps);
 		modelMap.put("vo", query);
 		return "house/listing";
@@ -51,14 +60,18 @@ public class HouseController {
 	 * @return
 	 */
 	@RequestMapping("house/detail")
-	public String houseDetail(Long id, ModelMap model) {
+	public String houseDetail(Long id, ModelMap modelMap) {
 		House house = houseService.queryOneHouse(id);
 		HouseUser houseUser = houseService.getHouseUser(id);
-		if(houseUser.getUserId() != null && houseUser.getUserId().equals(0)) {
-			model.put("agent", agencyService.getAgentDetail(house.getUserId()));
-		}
 		
-		model.put("house", house);
+		recommendService.increase(id);
+		 
+		if(houseUser.getUserId() != null && houseUser.getUserId().equals(0)) {
+			modelMap.put("agent", agencyService.getAgentDetail(house.getUserId()));
+		}
+		List<House> hotHouses = recommendService.getHotHouse(CommonConstants.RECOM_SIZE);
+		modelMap.put("recomHouses", hotHouses);
+		modelMap.put("house", house);
 		return "/house/detail";
 	}
 	
