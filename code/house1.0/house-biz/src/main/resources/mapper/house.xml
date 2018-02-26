@@ -44,7 +44,7 @@
 			limit #{pageParams.limit}
 		</if>
 	</select>
-	
+
 	<sql id="houseCondition">
 		<where>
 			<if test="house.id != null and house.id != 0">
@@ -54,28 +54,29 @@
 				and a.type = #{house.type}
 			</if>
 			<if test="house.name != null and house.name != ''">
-				<bind name="pattern1" value="'%' + house.name + '%'"/>
+				<bind name="pattern1" value="'%' + house.name + '%'" />
 				and a.name like #{pattern1}
 			</if>
 			<if test="house.ids">
-				and a.id in 
-				<foreach collection="house.ids" item="item" index="index" open="(" close=")" separator=",">
+				and a.id in
+				<foreach collection="house.ids" item="item" index="index"
+					open="(" close=")" separator=",">
 					#{item}
 				</foreach>
 			</if>
 		</where>
 	</sql>
-	
-	
-	
+
+
+
 	<select id="selectPageCount" resultType="long">
-		select count(id) from house a 
+		select count(id) from house a
 		<include refid="houseCondition"></include>
 	</select>
-	
+
 	<select id="selectCommunity" resultType="community">
-		select * 
-		from community 
+		select *
+		from community
 		<where>
 			<if test="id != null and id != 0">
 				and id = #{id}
@@ -86,5 +87,18 @@
 		</where>
 	</select>
 	
-	
+	<select id="selectSaleHouseUser" resultType="houseUser">
+		select id, house_id, user_id, create_time, type
+		from house_user 
+		where house_id = #{id} and type = 1
+		limit 1
+	</select>
+
+
+	<insert id="insertUserMsg">
+		insert into house_msg (msg,create_time,user_name,house_id,agent_id)
+		value(#{msg}, #{createTime}, #{userName}, #{houseId}, #{agentId})
+	</insert>
+
+
 </mapper>

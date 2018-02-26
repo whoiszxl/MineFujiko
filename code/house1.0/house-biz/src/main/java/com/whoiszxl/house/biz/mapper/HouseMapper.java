@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Param;
 
 import com.whoiszxl.house.common.model.Community;
 import com.whoiszxl.house.common.model.House;
+import com.whoiszxl.house.common.model.HouseUser;
+import com.whoiszxl.house.common.model.UserMsg;
 import com.whoiszxl.house.common.page.PageParams;
 
 /**
@@ -25,5 +27,9 @@ public interface HouseMapper {
 	public int insert(House house);
 
 	public List<Community> selectCommunity(Community community);
+
+	public void insertUserMsg(UserMsg userMsg);
+
+	public HouseUser selectSaleHouseUser(Long houseId);
 
 }

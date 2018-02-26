@@ -13,8 +13,12 @@ import com.google.common.collect.Lists;
 import com.whoiszxl.house.biz.mapper.HouseMapper;
 import com.whoiszxl.house.common.model.Community;
 import com.whoiszxl.house.common.model.House;
+import com.whoiszxl.house.common.model.HouseUser;
+import com.whoiszxl.house.common.model.User;
+import com.whoiszxl.house.common.model.UserMsg;
 import com.whoiszxl.house.common.page.PageData;
 import com.whoiszxl.house.common.page.PageParams;
+import com.whoiszxl.house.common.utils.BeanHelper;
 
 @Service
 public class HouseService {
@@ -24,6 +28,12 @@ public class HouseService {
 
 	@Autowired
 	private HouseMapper houseMapper;
+	
+	@Autowired
+	private AgencyService agencyService;
+	
+	@Autowired
+	private MailService mailService;
 	
 	/**
 	 * 1. 查询小区
@@ -56,6 +66,28 @@ public class HouseService {
 			h.setFloorPlanList(h.getFloorPlanList().stream().map(pic -> imgPrefix + pic).collect(Collectors.toList()));
 		});
 		return houses;
+	}
+
+	public House queryOneHouse(Long id) {
+		House query = new House();
+		query.setId(id);
+		List<House> houses = queryAndSetImg(query, PageParams.build(1, 1));
+		if(!houses.isEmpty()) {
+			return houses.get(0);
+		}
+		return null;
+	}
+
+	public void addUserMsg(UserMsg userMsg) {
+		BeanHelper.onInsert(userMsg);
+		houseMapper.insertUserMsg(userMsg);
+		User user = agencyService.getAgentDetail(userMsg.getAgentId());
+		mailService.sendMail("来自user:"+userMsg.getEmail()+"的留言", userMsg.getMsg(), user.getEmail());
+		
+	}
+
+	public HouseUser getHouseUser(Long houseId) {
+		return houseMapper.selectSaleHouseUser(houseId);
 	}
 
 }

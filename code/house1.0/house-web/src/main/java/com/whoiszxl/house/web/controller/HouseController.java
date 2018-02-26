@@ -5,8 +5,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.whoiszxl.house.biz.service.AgencyService;
 import com.whoiszxl.house.biz.service.HouseService;
 import com.whoiszxl.house.common.model.House;
+import com.whoiszxl.house.common.model.HouseUser;
+import com.whoiszxl.house.common.model.UserMsg;
 import com.whoiszxl.house.common.page.PageData;
 import com.whoiszxl.house.common.page.PageParams;
 
@@ -20,6 +23,9 @@ public class HouseController {
 
 	@Autowired
 	private HouseService houseService;
+	
+	@Autowired
+	private AgencyService agencyService;
 	
 	
 	/**
@@ -35,6 +41,32 @@ public class HouseController {
 		modelMap.put("ps", ps);
 		modelMap.put("vo", query);
 		return "house/listing";
+	}
+	
+	
+	/**
+	 * 1. 查询房屋详情
+	 * 2. 查询关联的经纪人
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping("house/detail")
+	public String houseDetail(Long id, ModelMap model) {
+		House house = houseService.queryOneHouse(id);
+		HouseUser houseUser = houseService.getHouseUser(id);
+		if(houseUser.getUserId() != null && houseUser.getUserId().equals(0)) {
+			model.put("agent", agencyService.getAgentDetail(house.getUserId()));
+		}
+		
+		model.put("house", house);
+		return "/house/detail";
+	}
+	
+	
+	@RequestMapping("house/leaveMsg")
+	public String houseMsg(UserMsg userMsg) {
+		houseService.addUserMsg(userMsg);
+		return "redirect:/house/detail?id="+userMsg.getHouseId();
 	}
 	
 	

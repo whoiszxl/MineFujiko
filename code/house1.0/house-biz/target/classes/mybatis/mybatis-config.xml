@@ -21,11 +21,15 @@
 			alias="house" />
 		<typeAlias type="com.whoiszxl.house.common.model.Community"
 			alias="community" />
+		<typeAlias type="com.whoiszxl.house.common.model.HouseUser"
+			alias="houseUser" />
+		
 	</typeAliases>
 
 	<mappers>
 		<mapper resource="mapper/user.xml" />
 		<mapper resource="mapper/house.xml" />
+		<mapper resource="mapper/agency.xml"/>
 	</mappers>
 
 </configuration>
