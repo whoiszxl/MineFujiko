@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.whoiszxl.house.common.model.Community;
 import com.whoiszxl.house.common.model.House;
 import com.whoiszxl.house.common.page.PageParams;
 
@@ -22,5 +23,7 @@ public interface HouseMapper {
 	public Long selectPageCount(@Param("house") House query);
 	
 	public int insert(House house);
+
+	public List<Community> selectCommunity(Community community);
 
 }

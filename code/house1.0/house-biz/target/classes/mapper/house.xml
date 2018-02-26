@@ -27,7 +27,16 @@
 	<select id="selectPageHouses" resultType="house">
 		select
 		<include refid="houseField"></include>
-		from house
+		from house a
+		<include refid="houseCondition"></include>
+		<choose>
+			<when test="house.sort != null and house.sort == 'price_asc'">
+				order by a.price asc
+			</when>
+			<when test="house.sort != null and house.sort == 'price_desc'">
+				order by a.price desc
+			</when>
+		</choose>
 		<if test="pageParams.offset != null and pageParams.limit != null">
 			limit #{pageParams.offset},#{pageParams.limit}
 		</if>
@@ -35,5 +44,47 @@
 			limit #{pageParams.limit}
 		</if>
 	</select>
-
+	
+	<sql id="houseCondition">
+		<where>
+			<if test="house.id != null and house.id != 0">
+				and a.id = #{house.id}
+			</if>
+			<if test="house.type != null">
+				and a.type = #{house.type}
+			</if>
+			<if test="house.name != null and house.name != ''">
+				<bind name="pattern1" value="'%' + house.name + '%'"/>
+				and a.name like #{pattern1}
+			</if>
+			<if test="house.ids">
+				and a.id in 
+				<foreach collection="house.ids" item="item" index="index" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</sql>
+	
+	
+	
+	<select id="selectPageCount" resultType="long">
+		select count(id) from house a 
+		<include refid="houseCondition"></include>
+	</select>
+	
+	<select id="selectCommunity" resultType="community">
+		select * 
+		from community 
+		<where>
+			<if test="id != null and id != 0">
+				and id = #{id}
+			</if>
+			<if test="name != null and name != ''">
+				and name = #{name}
+			</if>
+		</where>
+	</select>
+	
+	
 </mapper>

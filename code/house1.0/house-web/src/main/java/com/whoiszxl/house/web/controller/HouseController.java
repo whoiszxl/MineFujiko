@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.whoiszxl.house.biz.service.HouseService;
 import com.whoiszxl.house.common.model.House;
+import com.whoiszxl.house.common.page.PageData;
 import com.whoiszxl.house.common.page.PageParams;
 
 /**
@@ -30,9 +31,10 @@ public class HouseController {
 	 */
 	@RequestMapping("/house/list")
 	public String houseList(Integer pageSize,Integer pageNum,House query,ModelMap modelMap) {
-		houseService.queryHouse(query,PageParams.build(pageSize, pageNum));
-		
-		return null;
+		PageData<House> ps = houseService.queryHouse(query,PageParams.build(pageSize, pageNum));
+		modelMap.put("ps", ps);
+		modelMap.put("vo", query);
+		return "house/listing";
 	}
 	
 	
