@@ -112,5 +112,16 @@ public class HouseController {
 		return "redirect:/house/ownlist";
 	}
 	
+	@RequestMapping("house/ownlist")
+	public String ownlist(House house, Integer pageNum, Integer pageSize, ModelMap modelMap) {
+		User user = UserContext.getUser();
+		house.setUserId(user.getId());
+		house.setBookmarked(false);
+		
+		modelMap.put("ps", houseService.queryHouse(house, PageParams.build(pageSize, pageNum)));
+		modelMap.put("pageType", "own");
+		return "house/ownlist";
+	}
+	
 	
 }

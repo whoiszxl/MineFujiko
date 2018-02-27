@@ -46,6 +46,23 @@
 	</select>
 
 	<sql id="houseCondition">
+	
+		<if test="house.userId != null and house.userId != 0">
+			inner join (select house_id, user_id from house_user 
+				<where>
+					user_id = #{house.userId}
+					<if test="house.bookmarked != null and house.bookmarked == true">
+						and type = 2
+					</if>
+					
+					<if test="house.bookmarked != null and house.bookmarked == false">
+						and type = 1
+					</if>
+				</where>
+			) b
+			on a.id = b.house_id
+		</if>
+	
 		<where>
 			<if test="house.id != null and house.id != 0">
 				and a.id = #{house.id}
