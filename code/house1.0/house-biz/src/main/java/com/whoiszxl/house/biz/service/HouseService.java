@@ -25,40 +25,39 @@ import com.whoiszxl.house.common.utils.BeanHelper;
 
 @Service
 public class HouseService {
-	
+
 	@Value("${file.prefix}")
 	private String imgPrefix;
 
 	@Autowired
 	private HouseMapper houseMapper;
-	
+
 	@Autowired
 	private AgencyService agencyService;
-	
+
 	@Autowired
 	private MailService mailService;
-	
+
 	@Autowired
 	private FileService fileServices;
-	
+
 	/**
-	 * 1. 查询小区
-	 * 2. 添加图片服务器地址前缀
-	 * 3. 构建分页结果
+	 * 1. 查询小区 2. 添加图片服务器地址前缀 3. 构建分页结果
+	 * 
 	 * @param query
 	 * @param build
 	 */
 	public PageData<House> queryHouse(House query, PageParams pageParams) {
 		List<House> houses = Lists.newArrayList();
-		if(!Strings.isNullOrEmpty(query.getName())) {
+		if (!Strings.isNullOrEmpty(query.getName())) {
 			Community community = new Community();
 			community.setName(query.getName());
 			List<Community> communities = houseMapper.selectCommunity(community);
-			if(!communities.isEmpty()) {
+			if (!communities.isEmpty()) {
 				query.setCommunityId(communities.get(0).getId());
 			}
 		}
-		
+
 		houses = queryAndSetImg(query, pageParams);
 		Long count = houseMapper.selectPageCount(query);
 		return PageData.buildPage(houses, count, pageParams.getPageSize(), pageParams.getPageNum());
@@ -66,7 +65,7 @@ public class HouseService {
 
 	public List<House> queryAndSetImg(House query, PageParams pageParams) {
 		List<House> houses = houseMapper.selectPageHouses(query, pageParams);
-		houses.forEach(h ->{
+		houses.forEach(h -> {
 			h.setFirstImg(imgPrefix + h.getFirstImg());
 			h.setImageList(h.getImageList().stream().map(img -> imgPrefix + img).collect(Collectors.toList()));
 			h.setFloorPlanList(h.getFloorPlanList().stream().map(pic -> imgPrefix + pic).collect(Collectors.toList()));
@@ -78,7 +77,7 @@ public class HouseService {
 		House query = new House();
 		query.setId(id);
 		List<House> houses = queryAndSetImg(query, PageParams.build(1, 1));
-		if(!houses.isEmpty()) {
+		if (!houses.isEmpty()) {
 			return houses.get(0);
 		}
 		return null;
@@ -88,8 +87,8 @@ public class HouseService {
 		BeanHelper.onInsert(userMsg);
 		houseMapper.insertUserMsg(userMsg);
 		User user = agencyService.getAgentDetail(userMsg.getAgentId());
-		mailService.sendMail("来自user:"+userMsg.getEmail()+"的留言", userMsg.getMsg(), user.getEmail());
-		
+		mailService.sendMail("来自user:" + userMsg.getEmail() + "的留言", userMsg.getMsg(), user.getEmail());
+
 	}
 
 	public HouseUser getHouseUser(Long houseId) {
@@ -102,43 +101,66 @@ public class HouseService {
 	}
 
 	/**
-	 * 1. 添加房产图片
-	 * 2. 添加户型图片
-	 * 3. 插入房产信息
-	 * 4. 绑定用户到房产的关系
+	 * 1. 添加房产图片 2. 添加户型图片 3. 插入房产信息 4. 绑定用户到房产的关系
+	 * 
 	 * @param house
 	 * @param user
 	 */
 	public void addHouse(House house, User user) {
-		if(CollectionUtils.isNotEmpty(house.getHouseFiles())) {
+		if (CollectionUtils.isNotEmpty(house.getHouseFiles())) {
 			String images = Joiner.on(",").join(fileServices.getImgPaths(house.getHouseFiles()));
 			house.setImages(images);
 		}
-		
-		if(CollectionUtils.isNotEmpty(house.getFloorPlanFiles())) {
+
+		if (CollectionUtils.isNotEmpty(house.getFloorPlanFiles())) {
 			String images = Joiner.on(",").join(fileServices.getImgPaths(house.getFloorPlanFiles()));
 			house.setFloorPlan(images);
 		}
-		
+
 		BeanHelper.onInsert(house);
 		houseMapper.insert(house);
 		bindUser2House(house.getId(), user.getId(), false);
 	}
 
-	private void bindUser2House(Long houseId, Long userId, boolean isCollect) {
-		HouseUser existHouseUser = houseMapper.selectHouseUser(userId, houseId, isCollect ? HouseUserType.BOOKMARK.value:HouseUserType.SALE.value);
-		if(existHouseUser != null) {
-			return ;
+	public void bindUser2House(Long houseId, Long userId, boolean isCollect) {
+		HouseUser existHouseUser = houseMapper.selectHouseUser(userId, houseId,
+				isCollect ? HouseUserType.BOOKMARK.value : HouseUserType.SALE.value);
+		if (existHouseUser != null) {
+			return;
 		}
-		
+
 		HouseUser houseUser = new HouseUser();
 		houseUser.setHouseId(houseId);
 		houseUser.setUserId(userId);
-		houseUser.setType(isCollect ? HouseUserType.BOOKMARK.value:HouseUserType.SALE.value);
+		houseUser.setType(isCollect ? HouseUserType.BOOKMARK.value : HouseUserType.SALE.value);
 		BeanHelper.setDefaultProp(houseUser, HouseUser.class);
 		BeanHelper.onInsert(houseUser);
 		houseMapper.insertHouseUser(houseUser);
-		
+
+	}
+
+	public void updateRating(Long id, Double rating) {
+		// 查询到需要评分的房子
+		House house = queryOneHouse(id);
+		// 获取旧评分
+		Double oldRating = house.getRating();
+		// 如果为0,直接赋值,不为0就加上评分值取平均值,不能超过5
+		Double newRating = oldRating.equals(0D) ? rating : Math.min((oldRating + rating) / 2, 5);
+		// 创建一个需要更新的房子,设置id和评分进行更新
+		House updateHouse = new House();
+		updateHouse.setId(id);
+		updateHouse.setRating(newRating);
+		BeanHelper.onUpdate(updateHouse);
+		houseMapper.updateHouse(updateHouse);
+	}
+
+	public void unbindUser2House(Long id, Long userId, HouseUserType type) {
+		if (type.equals(HouseUserType.SALE)) {
+			houseMapper.downHouse(id);
+		} else {
+			houseMapper.deleteHouseUser(id, userId, type.value);
+		}
+
 	}
 
 }

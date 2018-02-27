@@ -28,12 +28,18 @@ public interface HouseMapper {
 
 	public List<Community> selectCommunity(Community community);
 
-	public void insertUserMsg(UserMsg userMsg);
+	public int insertUserMsg(UserMsg userMsg);
 
 	public HouseUser selectSaleHouseUser(Long houseId);
 
 	public HouseUser selectHouseUser(@Param("userId")Long userId, @Param("id")Long houseId, @Param("type")Integer integer);
 
 	public int insertHouseUser(HouseUser houseUser);
+
+	public int updateHouse(House updateHouse);
+
+	public int downHouse(Long id);
+
+	public int deleteHouseUser(@Param("id")Long id,@Param("userId") Long userId,@Param("type") Integer value);
 
 }

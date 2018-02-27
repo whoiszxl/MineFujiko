@@ -97,4 +97,14 @@ public class UserService {
 		userMapper.update(updateUser);
 	}
 
+	public User getUserById(Long userId) {
+		User queryUser = new User();
+	    queryUser.setId(userId);
+	    List<User> users = getUserByQuery(queryUser);
+	    if (!users.isEmpty()) {
+	      return users.get(0);
+	    }
+	    return null;
+	}
+
 }
