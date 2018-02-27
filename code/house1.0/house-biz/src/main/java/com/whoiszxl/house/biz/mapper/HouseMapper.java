@@ -32,4 +32,8 @@ public interface HouseMapper {
 
 	public HouseUser selectSaleHouseUser(Long houseId);
 
+	public HouseUser selectHouseUser(@Param("userId")Long userId, @Param("id")Long houseId, @Param("type")Integer integer);
+
+	public int insertHouseUser(HouseUser houseUser);
+
 }

@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.whoiszxl.house.biz.mapper.HouseMapper;
+import com.whoiszxl.house.common.constants.HouseUserType;
 import com.whoiszxl.house.common.model.Community;
 import com.whoiszxl.house.common.model.House;
 import com.whoiszxl.house.common.model.HouseUser;
@@ -34,6 +37,9 @@ public class HouseService {
 	
 	@Autowired
 	private MailService mailService;
+	
+	@Autowired
+	private FileService fileServices;
 	
 	/**
 	 * 1. 查询小区
@@ -93,6 +99,46 @@ public class HouseService {
 	public List<Community> getAllCommunitys() {
 		Community community = new Community();
 		return houseMapper.selectCommunity(community);
+	}
+
+	/**
+	 * 1. 添加房产图片
+	 * 2. 添加户型图片
+	 * 3. 插入房产信息
+	 * 4. 绑定用户到房产的关系
+	 * @param house
+	 * @param user
+	 */
+	public void addHouse(House house, User user) {
+		if(CollectionUtils.isNotEmpty(house.getHouseFiles())) {
+			String images = Joiner.on(",").join(fileServices.getImgPaths(house.getHouseFiles()));
+			house.setImages(images);
+		}
+		
+		if(CollectionUtils.isNotEmpty(house.getFloorPlanFiles())) {
+			String images = Joiner.on(",").join(fileServices.getImgPaths(house.getFloorPlanFiles()));
+			house.setFloorPlan(images);
+		}
+		
+		BeanHelper.onInsert(house);
+		houseMapper.insert(house);
+		bindUser2House(house.getId(), user.getId(), false);
+	}
+
+	private void bindUser2House(Long houseId, Long userId, boolean isCollect) {
+		HouseUser existHouseUser = houseMapper.selectHouseUser(userId, houseId, isCollect ? HouseUserType.BOOKMARK.value:HouseUserType.SALE.value);
+		if(existHouseUser != null) {
+			return ;
+		}
+		
+		HouseUser houseUser = new HouseUser();
+		houseUser.setHouseId(houseId);
+		houseUser.setUserId(userId);
+		houseUser.setType(isCollect ? HouseUserType.BOOKMARK.value:HouseUserType.SALE.value);
+		BeanHelper.setDefaultProp(houseUser, HouseUser.class);
+		BeanHelper.onInsert(houseUser);
+		houseMapper.insertHouseUser(houseUser);
+		
 	}
 
 }

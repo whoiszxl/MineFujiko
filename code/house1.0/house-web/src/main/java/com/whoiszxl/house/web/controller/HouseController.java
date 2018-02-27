@@ -1,6 +1,7 @@
 package com.whoiszxl.house.web.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,9 +15,11 @@ import com.whoiszxl.house.biz.service.RecommendService;
 import com.whoiszxl.house.common.constants.CommonConstants;
 import com.whoiszxl.house.common.model.House;
 import com.whoiszxl.house.common.model.HouseUser;
+import com.whoiszxl.house.common.model.User;
 import com.whoiszxl.house.common.model.UserMsg;
 import com.whoiszxl.house.common.page.PageData;
 import com.whoiszxl.house.common.page.PageParams;
+import com.whoiszxl.house.web.interceptor.UserContext;
 
 /**
  * 房屋控制器
@@ -91,6 +94,22 @@ public class HouseController {
 		map.put("citys", cityService.getAllCitys());
 		map.put("communitys", houseService.getAllCommunitys());		
 		return "house/add";
+	}
+	
+	
+	/**
+	 * 1. 获取当前用户
+	 * 2. 设置房产状态
+	 * 3. 添加房产
+	 * @param modelMap
+	 * @return
+	 */
+	@RequestMapping("house/add")
+	public String doAdd(House house) {
+		User user = UserContext.getUser();
+		house.setState(CommonConstants.HOUSE_STATE_UP);
+		houseService.addHouse(house, user);
+		return "redirect:/house/ownlist";
 	}
 	
 	
