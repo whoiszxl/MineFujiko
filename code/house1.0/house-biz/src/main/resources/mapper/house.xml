@@ -27,16 +27,7 @@
 	<select id="selectPageHouses" resultType="house">
 		select
 		<include refid="houseField"></include>
-		from house a
-		<include refid="houseCondition"></include>
-		<choose>
-			<when test="house.sort != null and house.sort == 'price_asc'">
-				order by a.price asc
-			</when>
-			<when test="house.sort != null and house.sort == 'price_desc'">
-				order by a.price desc
-			</when>
-		</choose>
+		from house
 		<if test="pageParams.offset != null and pageParams.limit != null">
 			limit #{pageParams.offset},#{pageParams.limit}
 		</if>
@@ -46,23 +37,6 @@
 	</select>
 
 	<sql id="houseCondition">
-	
-		<if test="house.userId != null and house.userId != 0">
-			inner join (select house_id, user_id from house_user 
-				<where>
-					user_id = #{house.userId}
-					<if test="house.bookmarked != null and house.bookmarked == true">
-						and type = 2
-					</if>
-					
-					<if test="house.bookmarked != null and house.bookmarked == false">
-						and type = 1
-					</if>
-				</where>
-			) b
-			on a.id = b.house_id
-		</if>
-	
 		<where>
 			<if test="house.id != null and house.id != 0">
 				and a.id = #{house.id}
@@ -70,148 +44,12 @@
 			<if test="house.type != null">
 				and a.type = #{house.type}
 			</if>
+			
 			<if test="house.name != null and house.name != ''">
-				<bind name="pattern1" value="'%' + house.name + '%'" />
+				<bind name="pattern1" value="'%' + house.name + '%'"/>
 				and a.name like #{pattern1}
 			</if>
-			<if test="house.ids">
-				and a.id in
-				<foreach collection="house.ids" item="item" index="index"
-					open="(" close=")" separator=",">
-					#{item}
-				</foreach>
-			</if>
 		</where>
-	</sql>
-
-
-
-	<select id="selectPageCount" resultType="long">
-		select count(id) from house a
-		<include refid="houseCondition"></include>
-	</select>
-
-	<select id="selectCommunity" resultType="community">
-		select *
-		from community
-		<where>
-			<if test="id != null and id != 0">
-				and id = #{id}
-			</if>
-			<if test="name != null and name != ''">
-				and name = #{name}
-			</if>
-		</where>
-	</select>
-
-	<select id="selectSaleHouseUser" resultType="houseUser">
-		select id, house_id,
-		user_id, create_time, type
-		from house_user
-		where house_id = #{id} and
-		type = 1
-		limit 1
-	</select>
-
-	<select id="selectHouseUser" resultType="houseUser">
-		select id,house_id,user_id,create_time,type
-		from house_user
-		where house_id = #{id} and user_id = #{userId} and type = #{type}
-	</select>
-
-
-	<update id="updateHouse">
-		update house
-		set rating = #{rating}
-		where id = #{id}
-	</update>
-
-	<update id="downHouse">
-		update house
-		set state = 2
-		where id = #{id}
-	</update>
-
-
-	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
-		insert
-		into house(
-		type,
-		name,
-		price,
-		images,
-		area,
-		beds,
-		baths,
-		rating,
-		remarks,
-		properties,
-		floor_plan,
-		tags,
-		create_time,
-		city_id,
-		community_id,
-		address,
-		state
-		)
-		value(
-		#{type},
-		#{name},
-		#{price},
-		#{images},
-		#{area},
-		#{beds},
-		#{baths},
-		#{rating},
-		#{remarks},
-		#{properties},
-		#{floorPlan},
-		#{tags},
-		#{createTime},
-		#{cityId},
-		#{communityId},
-		#{address},
-		#{state}
-		)
-	</insert>
-
-	<insert id="insertHouseUser">
-		insert into house_user (house_id,
-		user_id,
-		create_time,
-		type)
-		value(
-		#{houseId},
-		#{userId},
-		#{createTime},
-		#{type}
-		)
-
-	</insert>
-
-	<insert id="insertUserMsg">
-		insert into house_msg (
-		msg,
-		create_time,
-		user_name,
-		house_id,
-		agent_id
-		)
-		value(
-		#{msg},
-		#{createTime},
-		#{userName},
-		#{houseId},
-		#{agentId}
-		)
-	</insert>
-
-	<delete id="deleteHouseUser">
-		delete from house_user
-		where house_id = #{id} and
-		user_id = #{userId} and type=#{type}
-
-	</delete>
-
+	</sql>		
 
 </mapper>
