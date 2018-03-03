@@ -4,11 +4,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.zalando.logbook.httpclient.LogbookHttpRequestInterceptor;
+import org.zalando.logbook.httpclient.LogbookHttpResponseInterceptor;
 
 @Configuration
 @ConditionalOnClass({HttpClient.class})
@@ -21,6 +24,11 @@ public class HttpClientAutoConfiguration {
 		this.properties = properties;
 	}
 	
+	@Autowired
+	private LogbookHttpRequestInterceptor logbookHttpRequestInterceptor;
+	
+	@Autowired
+	private LogbookHttpResponseInterceptor logbookHttpResponseInterceptor;
 	
 	/**
 	 * httpclient bean 的定义
@@ -37,6 +45,8 @@ public class HttpClientAutoConfiguration {
 				.setMaxConnPerRoute(properties.getMaxConnPerRoute())
 				.setMaxConnTotal(properties.getMaxConnTotaol())//最大连接数
 				//.setConnectionReuseStrategy(new NoConnectionReuseStrategy())//设置连接重用策略
+				.addInterceptorFirst(logbookHttpRequestInterceptor)
+				.addInterceptorFirst(logbookHttpResponseInterceptor)
 				.build();
 		return client;
 	}
