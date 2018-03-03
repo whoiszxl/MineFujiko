@@ -26,7 +26,7 @@ public class GenericRest {
 		return template.exchange(url, HttpMethod.POST, new HttpEntity(reqBody), responseType);
 	}
 	
-	public <T> ResponseEntity<T> get(String url, Object reqBody, ParameterizedTypeReference<T> responseType) {
+	public <T> ResponseEntity<T> get(String url, ParameterizedTypeReference<T> responseType) {
 		RestTemplate template = getRestTemplate(url);
 		url = url.replace(directFlag, "");
 		return template.exchange(url, HttpMethod.GET, HttpEntity.EMPTY, responseType);
