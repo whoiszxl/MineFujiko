@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.whoiszxl.house.api.config.NewRuleConfig;
 
 @SpringBootApplication
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 @Controller
-@RibbonClient(name="user", configuration=NewRuleConfig.class)
+//@RibbonClient(name="user", configuration=NewRuleConfig.class)
 public class ApiGatewayApplication {
 	
 	@Autowired
